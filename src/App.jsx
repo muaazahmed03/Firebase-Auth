@@ -1,19 +1,40 @@
-import React from 'react'
-import { Route, Routes } from 'react-router-dom'
-import Login from './Components/Login'
-import Home from './Components/Home'
-import Signup from './Components/SignUp'
+import React from "react";
+import { Route, Routes } from "react-router-dom"; 
+import { ToastContainer } from "react-toastify";
+import ProtectedRoute from "./ProtectedRoute";
+import Dashboard from "./Dashboard";
+import AuthRoute from "./AuthRoute";
+import SignUp from "./Components/SignUp";
+import Login from "./Components/Login";
 
 const App = () => {
   return (
-    <div>
+    <>
       <Routes>
-        <Route path='/' element={<Home />}/>
-        <Route path='/signup' element={<Signup />}/>
-        <Route path='/login' element={<Login />}/>
-      </Routes>
-    </div>
-  )
-}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
 
-export default App
+        <Route element={<AuthRoute />}>
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+        </Route>
+      </Routes>
+
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+    </>
+  );
+};
+
+export default App;

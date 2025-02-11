@@ -19,7 +19,10 @@ import {
   SitemarkIcon,
 } from "./CustomIcons";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import auth from "./FirebaseConfig";
+import { auth, db } from "./FirebaseConfig";
+import { doc, setDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -75,19 +78,73 @@ export default function SignUp(props) {
     console.log(email, password);
   };
 
+  const navigate = useNavigate();
+
+  // Handle Submit
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(email, password);
+    console.log(email, password, name);
+
+    if (!name || !email || !password) {
+      toast.error("Required fields are missing!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      return;
+    }
 
     createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log("signup successfully...", userCredential);
+      .then(async (userCredential) => {
+        console.log(userCredential.user.uid);
+        // save data on firestore
+
+        let obj = {
+          email,
+          name,
+        };
+
+        let Uid = userCredential.user.uid;
+
+        const saveData = await setDoc(doc(db, "users", Uid), obj);
+
+        console.log(saveData);
+
+        toast.success("SignUp SuccessFully...", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+
+        navigate("/login");
       })
-      .catch((error) => {
-        const errorMessage = error.message;
-        console.log(errorMessage);
+      .catch((err) => {
+        toast.error("Something went wrong!!", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
       });
   };
+
+  const [name, setName] = React.useState("");
 
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -111,9 +168,9 @@ export default function SignUp(props) {
           >
             <FormLabel htmlFor="name">Full name</FormLabel>
             <TextField
+              onChange={(e) => setName(e.target.value)}
               autoComplete="name"
               name="name"
-              required
               fullWidth
               id="name"
               placeholder="Jon Snow"
@@ -127,7 +184,6 @@ export default function SignUp(props) {
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
-              required
               fullWidth
               id="email"
               placeholder="your@email.com"
@@ -141,7 +197,6 @@ export default function SignUp(props) {
 
             <FormLabel htmlFor="password">Password</FormLabel>
             <TextField
-              required
               onChange={(e) => {
                 setPassword(e.target.value);
               }}

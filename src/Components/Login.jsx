@@ -14,6 +14,7 @@ import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import ForgotPassword from "./ForgotPassword";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 import {
   GoogleIcon,
@@ -21,7 +22,10 @@ import {
   SitemarkIcon,
 } from "./CustomIcons";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import auth from "./FirebaseConfig";
+import { auth, db } from "./FirebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+// import auth from "../firebaseConfig";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -83,18 +87,33 @@ export default function Login(props) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
+  // Handle Submit
+
+  const navigate = useNavigate();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(email, password);
 
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         console.log(userCredential);
+        console.log(userCredential.user.uid);
+
+        localStorage.setItem("uid", userCredential.user.uid);
+
+        // get data from firestore
+
+        const getData = await getDoc(doc(db, "users", userCredential.user.uid));
+
+        console.log(getData.data());
+
+        localStorage.setItem("userData", JSON.stringify(getData.data()));
+
+        navigate("/dashboard");
       })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorMessage);
+      .catch((err) => {
+        console.log(err);
       });
   };
 
@@ -123,6 +142,30 @@ export default function Login(props) {
     }
 
     return isValid;
+  };
+
+  const loginWithGoogle = () => {
+    const provider = new GoogleAuthProvider();
+
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        console.log(user);
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        console.log(errorMessage);
+      });
   };
 
   return (
@@ -211,7 +254,7 @@ export default function Login(props) {
             <Button
               fullWidth
               variant="outlined"
-              onClick={() => alert("Sign in with Google")}
+              onClick={loginWithGoogle}
               startIcon={<GoogleIcon />}
             >
               Sign in with Google
