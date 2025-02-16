@@ -149,6 +149,8 @@ export default function SignUp(props) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
+  // const moveLogin = useNavigate()
+
   return (
     <>
       <SignUpContainer direction="column" justifyContent="space-between">
@@ -248,7 +250,10 @@ export default function SignUp(props) {
             <Typography sx={{ textAlign: "center" }}>
               Already have an account?{" "}
               <Link
-                href="/material-ui/getting-started/templates/sign-in/"
+              // onClick={()=>{
+              //   moveLogin('/login')
+              // }}
+                href="/login"
                 variant="body2"
                 sx={{ alignSelf: "center" }}
               >
