@@ -23,6 +23,9 @@ import { auth, db } from "./FirebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -32,11 +35,11 @@ const Card = styled(MuiCard)(({ theme }) => ({
   padding: theme.spacing(4),
   gap: theme.spacing(2),
   margin: "auto",
-  boxShadow:
-    "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
   [theme.breakpoints.up("sm")]: {
     width: "450px",
   },
+  boxShadow:
+    "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
   ...theme.applyStyles("dark", {
     boxShadow:
       "hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px",
@@ -74,19 +77,18 @@ export default function SignUp(props) {
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState("");
 
-  const validateInputs = () => {
-    console.log(email, password);
-  };
+  const [name, setName] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [role, setRole] = React.useState(""); // State for role (Admin/Client)
 
   const navigate = useNavigate();
 
   // Handle Submit
-
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(email, password, name);
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !role) {
       toast.error("Required fields are missing!", {
         position: "top-right",
         autoClose: 5000,
@@ -97,27 +99,28 @@ export default function SignUp(props) {
         progress: undefined,
         theme: "light",
       });
-
       return;
     }
 
     createUserWithEmailAndPassword(auth, email, password)
       .then(async (userCredential) => {
-        console.log(userCredential.user.uid);
-        // save data on firestore
+        const user = userCredential.user;
 
-        let obj = {
-          email,
+        // Prepare user data
+        const userData = {
           name,
+          email,
+          role,
         };
 
-        let Uid = userCredential.user.uid;
+        // Save data to Firestore based on role
+        if (role === "Admin") {
+          await setDoc(doc(db, "Admins", user.uid), userData);
+        } else if (role === "Client") {
+          await setDoc(doc(db, "Clients", user.uid), userData);
+        }
 
-        const saveData = await setDoc(doc(db, "users", Uid), obj);
-
-        console.log(saveData);
-
-        toast.success("SignUp SuccessFully...", {
+        toast.success("SignUp Successful!", {
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: false,
@@ -130,8 +133,8 @@ export default function SignUp(props) {
 
         navigate("/login");
       })
-      .catch((err) => {
-        toast.error("Something went wrong!!", {
+      .catch((error) => {
+        toast.error("Something went wrong!", {
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: false,
@@ -141,15 +144,9 @@ export default function SignUp(props) {
           progress: undefined,
           theme: "colored",
         });
+        console.error(error);
       });
   };
-
-  const [name, setName] = React.useState("");
-
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-
-  // const moveLogin = useNavigate()
 
   return (
     <>
@@ -183,9 +180,7 @@ export default function SignUp(props) {
 
             <FormLabel htmlFor="email">Email</FormLabel>
             <TextField
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
+              onChange={(e) => setEmail(e.target.value)}
               fullWidth
               id="email"
               placeholder="your@email.com"
@@ -199,9 +194,7 @@ export default function SignUp(props) {
 
             <FormLabel htmlFor="password">Password</FormLabel>
             <TextField
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
+              onChange={(e) => setPassword(e.target.value)}
               fullWidth
               name="password"
               placeholder="••••••"
@@ -214,6 +207,21 @@ export default function SignUp(props) {
               color={passwordError ? "error" : "primary"}
             />
 
+            {/* Dropdown for Role */}
+            <FormControl fullWidth>
+              <InputLabel id="role-label">Role</InputLabel>
+              <Select
+                labelId="role-label"
+                id="role"
+                value={role}
+                label="Role"
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <MenuItem value="Admin">Admin</MenuItem>
+                <MenuItem value="Client">Client</MenuItem>
+              </Select>
+            </FormControl>
+
             <FormControlLabel
               control={<Checkbox value="allowExtraEmails" color="primary" />}
               label="I want to receive updates via email."
@@ -222,7 +230,6 @@ export default function SignUp(props) {
               type="submit"
               fullWidth
               variant="contained"
-              onClick={validateInputs}
             >
               Sign up
             </Button>
@@ -249,14 +256,7 @@ export default function SignUp(props) {
             </Button>
             <Typography sx={{ textAlign: "center" }}>
               Already have an account?{" "}
-              <Link
-              // onClick={()=>{
-              //   moveLogin('/login')
-              // }}
-                href="/login"
-                variant="body2"
-                sx={{ alignSelf: "center" }}
-              >
+              <Link href="/login" variant="body2" sx={{ alignSelf: "center" }}>
                 Sign in
               </Link>
             </Typography>

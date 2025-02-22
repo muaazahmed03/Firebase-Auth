@@ -15,7 +15,6 @@ import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import ForgotPassword from "./ForgotPassword";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-
 import {
   GoogleIcon,
   FacebookIcon,
@@ -25,7 +24,9 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "./FirebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-// import auth from "../firebaseConfig";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -75,6 +76,7 @@ export default function Login(props) {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const [open, setOpen] = React.useState(false);
+  const [role, setRole] = React.useState(""); // State for role (Admin/Client)
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -87,84 +89,63 @@ export default function Login(props) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
-  // Handle Submit
-
   const navigate = useNavigate();
 
+  // Handle Submit
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(email, password);
+
+    if (!email || !password || !role) {
+      alert("Please fill all fields!");
+      return;
+    }
 
     signInWithEmailAndPassword(auth, email, password)
       .then(async (userCredential) => {
-        console.log(userCredential);
-        console.log(userCredential.user.uid);
+        const user = userCredential.user;
 
-        localStorage.setItem("uid", userCredential.user.uid);
+        // Fetch user data from Firestore based on role
+        let userDoc;
+        if (role === "Admin") {
+          userDoc = await getDoc(doc(db, "Admins", user.uid));
+        } else if (role === "Client") {
+          userDoc = await getDoc(doc(db, "Clients", user.uid));
+        }
 
-        // get data from firestore
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
 
-        const getData = await getDoc(doc(db, "users", userCredential.user.uid));
+          localStorage.setItem("uid", user.uid);
+          localStorage.setItem("userData", JSON.stringify(userData));
 
-        console.log(getData.data());
-
-        localStorage.setItem("userData", JSON.stringify(getData.data()));
-
-        navigate("/dashboard");
+          // Navigate based on role
+          if (role === "Admin") {
+            navigate("/admin-dashboard");
+          } else if (role === "Client") {
+            navigate("/client-dashboard");
+          }
+        } else {
+          alert("User data not found!");
+        }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        console.error(error);
+        alert("Login failed. Please check your credentials.");
       });
   };
 
-  const validateInputs = () => {
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-
-    let isValid = true;
-
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage("Please enter a valid email address.");
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage("");
-    }
-
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage("Password must be at least 6 characters long.");
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage("");
-    }
-
-    return isValid;
-  };
-
+  // Google Login
   const loginWithGoogle = () => {
     const provider = new GoogleAuthProvider();
 
     signInWithPopup(auth, provider)
       .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
         const user = result.user;
         console.log(user);
+        // Handle Google login (optional)
       })
       .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        console.log(errorMessage);
+        console.error(error);
       });
   };
 
@@ -194,9 +175,7 @@ export default function Login(props) {
             <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
               <TextField
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                }}
+                onChange={(e) => setEmail(e.target.value)}
                 error={emailError}
                 helperText={emailErrorMessage}
                 id="email"
@@ -214,9 +193,7 @@ export default function Login(props) {
             <FormControl>
               <FormLabel htmlFor="password">Password</FormLabel>
               <TextField
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
+                onChange={(e) => setPassword(e.target.value)}
                 error={passwordError}
                 helperText={passwordErrorMessage}
                 name="password"
@@ -231,6 +208,22 @@ export default function Login(props) {
                 color={passwordError ? "error" : "primary"}
               />
             </FormControl>
+
+            {/* Dropdown for Role */}
+            <FormControl fullWidth>
+              <InputLabel id="role-label">Role</InputLabel>
+              <Select
+                labelId="role-label"
+                id="role"
+                value={role}
+                label="Role"
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <MenuItem value="Admin">Admin</MenuItem>
+                <MenuItem value="Client">Client</MenuItem>
+              </Select>
+            </FormControl>
+
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
@@ -269,11 +262,7 @@ export default function Login(props) {
             </Button>
             <Typography sx={{ textAlign: "center" }}>
               Don&apos;t have an account?{" "}
-              <Link
-                href="/"
-                variant="body2"
-                sx={{ alignSelf: "center" }}
-              >
+              <Link href="/" variant="body2" sx={{ alignSelf: "center" }}>
                 Sign up
               </Link>
             </Typography>

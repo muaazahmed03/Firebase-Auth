@@ -34,14 +34,12 @@ import ClassList from "./Screens/ClassList";
 import FeeVoucherPage from "./Screens/FeeVoucher";
 import FeeStructure from "./Screens/FeeStructure";
 import AdmissionForm from "./Screens/AdmissionForm";
-import ExamSchedule from "./Screens/ExamSchedule";
-import ExamResult from "./Screens/ExamResult";
 import { Button, Menu, MenuItem, Avatar } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
 
 const drawerWidth = 240;
 
-function Dashboard(props) {
+function AdminDashboard(props) {
   const logout = useNavigate();
   const signOut = () => {
     localStorage.clear();
@@ -186,22 +184,6 @@ function Dashboard(props) {
         },
       ],
     },
-    {
-      text: "Exam",
-      icon: <DashboardIcon />,
-      mainItems: [
-        {
-          text: <b>Exam Schedule</b>,
-          route: "examschedule",
-          icon: <ForwardIcon />,
-        },
-        {
-          text: <b>Exam Result</b>,
-          route: "examresult",
-          icon: <ForwardIcon />,
-        },
-      ],
-    },
   ]);
 
   const handleDrawerToggle = () => {
@@ -210,10 +192,10 @@ function Dashboard(props) {
   const navigate = useNavigate();
 
   const handleRouter = (route) => {
-    navigate(`/client-dashboard/${route}`);
+    navigate(`/admin-dashboard/${route}`);
   };
   const handleMainRouter = (route) => {
-    navigate(`/client-dashboard/${route}`);
+    navigate(`/admin-dashboard/${route}`);
   };
 
   const handleSubMenuClick = (text) => {
@@ -292,7 +274,7 @@ function Dashboard(props) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            CLIENT LEARNING MANAGEMENT SYSTEM
+            ADMIN LEARNING MANAGEMENT SYSTEM
           </Typography>
           <IconButton onClick={handleProfileMenuOpen} sx={{ p: 0 }}>
             <Avatar sx={{ bgcolor: deepPurple[500] }}>P</Avatar>
@@ -370,12 +352,10 @@ function Dashboard(props) {
           <Route path="/feestructure" element={<FeeStructure />} />
           <Route path="/feevoucher" element={<FeeVoucherPage />} />
           <Route path="/admissionform" element={<AdmissionForm />} />
-          <Route path="/examschedule" element={<ExamSchedule />} />
-          <Route path="/examresult" element={<ExamResult />} />
         </Routes>
       </Box>
     </Box>
   );
 }
 
-export default Dashboard;
+export default AdminDashboard;
