@@ -1,0 +1,202 @@
+{
+  "dashboard": {
+    "totalBookings": 50,
+    "activeBookings": 25,
+    "availableRooms": 30,
+    "revenue": 15000
+  },
+  "customer": [],
+  "rooms": [
+    {
+      "id": 1,
+      "roomNumber": "101",
+      "type": "Deluxe",
+      "price": 150,
+      "status": "available"
+    },
+    {
+      "id": 2,
+      "roomNumber": "102",
+      "type": "Standard",
+      "price": 100,
+      "status": "available"
+    },
+    {
+      "id": 3,
+      "roomNumber": "103",
+      "type": "Standard",
+      "price": 200,
+      "status": "available"
+    },
+    {
+      "id": 4,
+      "roomNumber": "104",
+      "type": "Delux",
+      "price": 430,
+      "status": "available"
+    }
+  ],
+  "bookings": [
+    {
+      "id": "df28",
+      "roomId": 1,
+      "customerName": "Muaaz Ahmed Baig",
+      "checkInDate": "2025-02-13",
+      "checkOutDate": "2025-02-19",
+      "status": "booked"
+    },
+    {
+      "id": "008d",
+      "roomId": 1,
+      "customerName": "Ahmed",
+      "checkInDate": "2025-02-13",
+      "checkOutDate": "2025-02-19",
+      "status": "booked"
+    },
+    {
+      "id": "8a84",
+      "roomId": 1,
+      "customerName": "Faiq",
+      "checkInDate": "2025-02-06",
+      "checkOutDate": "2025-02-17",
+      "status": "booked"
+    },
+    {
+      "id": "a2cb",
+      "roomId": 2,
+      "customerName": "Ali Ahmed",
+      "checkInDate": "2025-02-18",
+      "checkOutDate": "2025-02-08",
+      "status": "booked"
+    },
+    {
+      "id": "8876",
+      "roomId": 1,
+      "customerName": "bilal",
+      "checkInDate": "2025-02-04",
+      "checkOutDate": "2025-02-12",
+      "status": "booked"
+    },
+    {
+      "id": "a7b2",
+      "roomId": 1,
+      "customerName": "faisal",
+      "checkInDate": "2025-02-18",
+      "checkOutDate": "2025-02-03",
+      "status": "booked"
+    },
+    {
+      "id": "86bc",
+      "roomId": 1,
+      "customerName": "ali ahmed",
+      "checkInDate": "2025-02-14",
+      "checkOutDate": "2025-02-06",
+      "status": "booked"
+    },
+    {
+      "id": "1f3f",
+      "roomId": 1,
+      "customerName": "faisal khan",
+      "checkInDate": "2025-02-05",
+      "checkOutDate": "2025-02-05",
+      "status": "booked"
+    }
+  ],
+  "payments": [
+    {
+      "id": "45c7",
+      "bookingId": "a2cb",
+      "amount": 100,
+      "status": "successful"
+    },
+    {
+      "id": "cc80",
+      "bookingId": 1244555,
+      "amount": 1200,
+      "status": "successful"
+    },
+    {
+      "id": "d16b",
+      "bookingId": "8876",
+      "amount": 150,
+      "status": "successful"
+    },
+    {
+      "id": "d03a",
+      "bookingId": "a7b2",
+      "amount": 150,
+      "status": "successful"
+    },
+    {
+      "id": "437d",
+      "bookingId": "86bc",
+      "amount": 150,
+      "status": "successful"
+    },
+    {
+      "id": "d570",
+      "bookingId": "1f3f",
+      "amount": 150,
+      "status": "successful"
+    }
+  ],
+  "services": [
+    {
+      "id": 1,
+      "name": "Room Service",
+      "price": 20
+    },
+    {
+      "id": 2,
+      "name": "Laundry",
+      "price": 10
+    }
+  ],
+  "serviceRequests": [
+    {
+      "id": 1,
+      "customerId": 1,
+      "serviceId": 1,
+      "status": "pending"
+    },
+    {
+      "id": 2,
+      "customerId": 2,
+      "serviceId": 2,
+      "status": "completed"
+    }
+  ],
+  "inventory": [
+    {
+      "id": 1,
+      "name": "Towels",
+      "quantity": 100,
+      "status": "in-stock"
+    },
+    {
+      "id": 2,
+      "name": "Shampoo",
+      "quantity": 50,
+      "status": "low-stock"
+    },
+    {
+      "id": "0b25",
+      "name": "Desk",
+      "quantity": 2,
+      "status": "low-price"
+    },
+    {
+      "id": "eaee",
+      "name": "Brush",
+      "quantity": 2,
+      "status": "In-stock"
+    }
+  ],
+  "profile": {
+    "id": 1,
+    "name": "Admin User",
+    "email": "admin@example.com",
+    "phone": "123-456-7890",
+    "role": "Admin"
+  }
+}

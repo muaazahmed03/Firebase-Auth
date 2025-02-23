@@ -91,47 +91,77 @@ export default function Login(props) {
 
   const navigate = useNavigate();
 
+  // Validate Email
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  // Validate Password
+  const validatePassword = (password) => {
+    return password.length >= 6;
+  };
+
   // Handle Submit
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // Reset errors
+    setEmailError(false);
+    setEmailErrorMessage("");
+    setPasswordError(false);
+    setPasswordErrorMessage("");
+
+    // Validate fields
     if (!email || !password || !role) {
       alert("Please fill all fields!");
       return;
     }
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then(async (userCredential) => {
-        const user = userCredential.user;
+    if (!validateEmail(email)) {
+      setEmailError(true);
+      setEmailErrorMessage("Please enter a valid email address.");
+      return;
+    }
 
-        // Fetch user data from Firestore based on role
-        let userDoc;
+    if (!validatePassword(password)) {
+      setPasswordError(true);
+      setPasswordErrorMessage("Password must be at least 6 characters long.");
+      return;
+    }
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Fetch user data from Firestore based on role
+      let userDoc;
+      if (role === "Admin") {
+        userDoc = await getDoc(doc(db, "Admins", user.uid));
+      } else if (role === "Client") {
+        userDoc = await getDoc(doc(db, "Clients", user.uid));
+      }
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+
+        // Save user data to localStorage
+        localStorage.setItem("uid", user.uid);
+        localStorage.setItem("userData", JSON.stringify(userData));
+
+        // Navigate based on role
         if (role === "Admin") {
-          userDoc = await getDoc(doc(db, "Admins", user.uid));
+          navigate("/admin-dashboard");
         } else if (role === "Client") {
-          userDoc = await getDoc(doc(db, "Clients", user.uid));
+          navigate("/client-dashboard");
         }
-
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-
-          localStorage.setItem("uid", user.uid);
-          localStorage.setItem("userData", JSON.stringify(userData));
-
-          // Navigate based on role
-          if (role === "Admin") {
-            navigate("/admin-dashboard");
-          } else if (role === "Client") {
-            navigate("/client-dashboard");
-          }
-        } else {
-          alert("User data not found!");
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        alert("Login failed. Please check your credentials.");
-      });
+      } else {
+        alert("User data not found!");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Login failed. Please check your credentials.");
+    }
   };
 
   // Google Login

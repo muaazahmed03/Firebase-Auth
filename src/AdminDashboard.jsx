@@ -19,23 +19,19 @@ import { useState } from "react";
 import Collapse from "@mui/material/Collapse";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ForwardIcon from "@mui/icons-material/Forward";
-import StudentReg from "./Screens/StudentReg";
-import StudentList from "./Screens/StudentList";
-import TeacherReg from "./Screens/TeacherReg";
-import TeacherList from "./Screens/TeacherList";
-import SubjectAdd from "./Screens/SubjectAdd";
-import SubjectList from "./Screens/SubjectList";
-import SyllabusForm from "./Screens/SyllabusForm";
-import SyllabusList from "./Screens/SyllabusList";
-import StdReg from "./Screens/StdReg";
-import TeachReg from "./Screens/TeachReg";
-import ClassForm from "./Screens/ClassForm";
-import ClassList from "./Screens/ClassList";
-import FeeVoucherPage from "./Screens/FeeVoucher";
-import FeeStructure from "./Screens/FeeStructure";
-import AdmissionForm from "./Screens/AdmissionForm";
 import { Button, Menu, MenuItem, Avatar } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
+
+// Import Screens for Hotel Management
+// import LoginScreen from "./Screens/LoginScreen";
+import DashboardScreen from "./Screens/DashboardScreen";
+import CustomerManagementScreen from "./Screens/CustomerManagementScreen";
+import RoomManagementScreen from "./Screens/RoomManagementScreen";
+import BookingManagementScreen from "./Screens/BookingManagementScreen";
+import PaymentManagementScreen from "./Screens/PaymentManagementScreen";
+import ServiceManagementScreen from "./Screens/ServiceManagementScreen";
+import InventoryManagementScreen from "./Screens/InventoryManagementScreen";
+import ProfileManagementScreen from "./Screens/ProfileManagementScreen";
 
 const drawerWidth = 240;
 
@@ -62,127 +58,44 @@ function AdminDashboard(props) {
 
   const [pagesArr, setPagesArr] = React.useState([
     {
-      text: "Students",
+      text: "Dashboard",
       icon: <DashboardIcon />,
-      mainItems: [
-        {
-          text: <b>Student Registration</b>,
-          route: "studentreg",
-          icon: <ForwardIcon />,
-        },
-        {
-          text: <b>Student List</b>,
-          route: "studentlist",
-          icon: <ForwardIcon />,
-        },
-      ],
+      route: "dashboard",
     },
     {
-      text: "Teacher",
+      text: "Customer Management",
       icon: <DashboardIcon />,
-      mainItems: [
-        {
-          text: <b>Teacher Registration</b>,
-          route: "teacherreg",
-          icon: <ForwardIcon />,
-        },
-        {
-          text: <b>Teacher List</b>,
-          route: "teacherlist",
-          icon: <ForwardIcon />,
-        },
-      ],
+      route: "customermanagement",
     },
     {
-      text: "Subjects",
+      text: "Room Management",
       icon: <DashboardIcon />,
-      mainItems: [
-        {
-          text: <b>Subjects Add</b>,
-          route: "subjectadd",
-          icon: <ForwardIcon />,
-        },
-        {
-          text: <b>Subject List</b>,
-          route: "subjectlist",
-          icon: <ForwardIcon />,
-        },
-      ],
+      route: "roommanagement",
     },
     {
-      text: "Syllabus",
+      text: "Booking Management",
       icon: <DashboardIcon />,
-      mainItems: [
-        {
-          text: <b>Syllabus Form</b>,
-          route: "syllabusform",
-          icon: <ForwardIcon />,
-        },
-        {
-          text: <b>Syllabus List</b>,
-          route: "syllabuslist",
-          icon: <ForwardIcon />,
-        },
-      ],
+      route: "bookingmanagement",
     },
     {
-      text: "School",
+      text: "Payment Management",
       icon: <DashboardIcon />,
-      mainItems: [
-        {
-          text: <b>Student Registration</b>,
-          route: "stdreg",
-          icon: <ForwardIcon />,
-        },
-        {
-          text: <b>Teacher Registration</b>,
-          route: "teachreg",
-          icon: <ForwardIcon />,
-        },
-      ],
+      route: "paymentmanagement",
     },
     {
-      text: "Class",
+      text: "Service Management",
       icon: <DashboardIcon />,
-      mainItems: [
-        {
-          text: <b>Class Form</b>,
-          route: "classform",
-          icon: <ForwardIcon />,
-        },
-        {
-          text: <b>Class List</b>,
-          route: "classlist",
-          icon: <ForwardIcon />,
-        },
-      ],
+      route: "servicemanagement",
     },
     {
-      text: "Fees",
+      text: "Inventory Management",
       icon: <DashboardIcon />,
-      mainItems: [
-        {
-          text: <b>Fee Structure</b>,
-          route: "feestructure",
-          icon: <ForwardIcon />,
-        },
-        {
-          text: <b>Fee Voucher</b>,
-          route: "feevoucher",
-          icon: <ForwardIcon />,
-        },
-      ],
+      route: "inventorymanagement",
     },
     {
-      text: "Admission",
+      text: "Profile Management",
       icon: <DashboardIcon />,
-      mainItems: [
-        {
-          text: <b>Admission Form</b>,
-          route: "admissionform",
-          icon: <ForwardIcon />,
-        },
-      ],
+      route: "profilemanagement",
     },
   ]);
 
@@ -194,13 +107,6 @@ function AdminDashboard(props) {
   const handleRouter = (route) => {
     navigate(`/admin-dashboard/${route}`);
   };
-  const handleMainRouter = (route) => {
-    navigate(`/admin-dashboard/${route}`);
-  };
-
-  const handleSubMenuClick = (text) => {
-    setOpenSubMenu(openSubMenu === text ? "" : text);
-  };
 
   const drawer = (
     <div>
@@ -208,42 +114,14 @@ function AdminDashboard(props) {
       <Divider />
       <List>
         {pagesArr.map((item, index) => {
-          const { text, icon, route, subItems, mainItems } = item;
+          const { text, icon, route } = item;
           return (
-            <div key={text}>
-              {mainItems ? (
-                <ListItem onClick={() => handleSubMenuClick(text)}>
-                  <ListItemButton>
-                    <ListItemIcon>{icon}</ListItemIcon>
-                    <ListItemText primary={text} />
-                  </ListItemButton>
-                </ListItem>
-              ) : (
-                <ListItem onClick={() => handleRouter(route)}>
-                  <ListItemButton>
-                    <ListItemIcon>{icon}</ListItemIcon>
-                    <ListItemText primary={text} />
-                  </ListItemButton>
-                </ListItem>
-              )}
-              {mainItems && (
-                <Collapse in={openSubMenu === text} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    {mainItems.map((Item, Index) => (
-                      <ListItem
-                        key={Index}
-                        onClick={() => handleMainRouter(Item.route)}
-                      >
-                        <ListItemButton>
-                          <ListItemIcon>{Item.icon}</ListItemIcon>
-                          <ListItemText primary={Item.text} />
-                        </ListItemButton>
-                      </ListItem>
-                    ))}
-                  </List>
-                </Collapse>
-              )}
-            </div>
+            <ListItem key={text} onClick={() => handleRouter(route)}>
+              <ListItemButton>
+                <ListItemIcon>{icon}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
           );
         })}
       </List>
@@ -274,7 +152,7 @@ function AdminDashboard(props) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            ADMIN LEARNING MANAGEMENT SYSTEM
+            ADMIN HOTEL MANAGEMENT SYSTEM
           </Typography>
           <IconButton onClick={handleProfileMenuOpen} sx={{ p: 0 }}>
             <Avatar sx={{ bgcolor: deepPurple[500] }}>P</Avatar>
@@ -337,21 +215,14 @@ function AdminDashboard(props) {
       >
         <Toolbar />
         <Routes>
-          <Route path="/studentreg" element={<StudentReg />} />
-          <Route path="/studentlist" element={<StudentList />} />
-          <Route path="/teacherreg" element={<TeacherReg />} />
-          <Route path="/teacherlist" element={<TeacherList />} />
-          <Route path="/subjectadd" element={<SubjectAdd />} />
-          <Route path="/subjectlist" element={<SubjectList />} />
-          <Route path="/syllabusform" element={<SyllabusForm />} />
-          <Route path="/syllabuslist" element={<SyllabusList />} />
-          <Route path="/stdreg" element={<StdReg />} />
-          <Route path="/teachreg" element={<TeachReg />} />
-          <Route path="/classform" element={<ClassForm />} />
-          <Route path="/classlist" element={<ClassList />} />
-          <Route path="/feestructure" element={<FeeStructure />} />
-          <Route path="/feevoucher" element={<FeeVoucherPage />} />
-          <Route path="/admissionform" element={<AdmissionForm />} />
+          <Route path="/dashboard" element={<DashboardScreen />} />
+          <Route path="/customermanagement" element={<CustomerManagementScreen />} />
+          <Route path="/roommanagement" element={<RoomManagementScreen />} />
+          <Route path="/bookingmanagement" element={<BookingManagementScreen />} />
+          <Route path="/paymentmanagement" element={<PaymentManagementScreen />} />
+          <Route path="/servicemanagement" element={<ServiceManagementScreen />} />
+          <Route path="/inventorymanagement" element={<InventoryManagementScreen />} />
+          <Route path="/profilemanagement" element={<ProfileManagementScreen />} />
         </Routes>
       </Box>
     </Box>

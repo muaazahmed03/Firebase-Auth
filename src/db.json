@@ -1,0 +1,93 @@
+{
+    "users": [
+      {
+        "id": 1,
+        "username": "admin",
+        "password": "admin123",
+        "role": "admin"
+      },
+      {
+        "id": 2,
+        "username": "manager",
+        "password": "manager123",
+        "role": "manager"
+      }
+    ],
+    "customers": [
+      {
+        "id": 1,
+        "name": "John Doe",
+        "email": "john@example.com",
+        "phone": "1234567890",
+        "bookings": [1]
+      }
+    ],
+    "rooms": [
+      {
+        "id": 1,
+        "roomNumber": "101",
+        "type": "Deluxe",
+        "price": 150,
+        "status": "available"
+      },
+      {
+        "id": 2,
+        "roomNumber": "102",
+        "type": "Standard",
+        "price": 100,
+        "status": "occupied"
+      }
+    ],
+    "bookings": [
+      {
+        "id": 1,
+        "customerId": 1,
+        "roomId": 1,
+        "checkInDate": "2023-10-01",
+        "checkOutDate": "2023-10-05",
+        "status": "checked-in"
+      }
+    ],
+    "payments": [
+      {
+        "id": 1,
+        "bookingId": 1,
+        "amount": 750,
+        "status": "completed"
+      }
+    ],
+    "services": [
+      {
+        "id": 1,
+        "name": "Room Service",
+        "price": 20
+      },
+      {
+        "id": 2,
+        "name": "Laundry",
+        "price": 10
+      }
+    ],
+    "serviceRequests": [
+      {
+        "id": 1,
+        "customerId": 1,
+        "serviceId": 1,
+        "status": "pending"
+      }
+    ],
+    "inventory": [
+      {
+        "id": 1,
+        "name": "Towels",
+        "quantity": 100,
+        "status": "in-stock"
+      },
+      {
+        "id": 2,
+        "name": "Shampoo",
+        "quantity": 50,
+        "status": "low-stock"
+      }
+    ]
+  }
